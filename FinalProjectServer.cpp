@@ -1,4 +1,4 @@
-﻿#include "C:\Users\zeno\source\repos\final\Common.h"
+﻿#include "Common.h"
 
 #define BUFSIZE    512
 #define FULL       20
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 
         // 클라이언트 이름 입력 받기
     RECV_NAME:
-        retval = recv(client_sock, ptr->nickname, (int)strlen(ptr->nickname), 0);
+        retval = recv(client_sock, ptr->nickname, sizeof(ptr->nickname) - 1, 0);
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
             break;
@@ -131,7 +131,6 @@ int main(int argc, char* argv[])
         strcpy(ptr->ip, addr);
         ptr->port = ntohs(clientaddr.sin_port);
         SocketInfoArray[nTotalSockets++] = ptr;
-        //add = true;
 
         printf("\n[클라이언트 접속(%d/%d)] 이름=%s, IP 주소=%s, 포트 번호=%d\n",
             nTotalSockets, maxSockets, ptr->nickname, ptr->ip, ptr->port);
@@ -245,13 +244,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
             printf("%s\n", ptr->buf);
         }
 
-        // 이름길이
-        int namelen = (int)strlen(ptr->nickname) + 3;
-
         // 모든 클라이언트에 전송
         for (int i = 0; i < nTotalSockets; i++) {
             if (ptr->sock == SocketInfoArray[i]->sock) { continue; }
-            retval = send(SocketInfoArray[i]->sock, ptr->buf, retval + namelen, 0);
+            retval = send(SocketInfoArray[i]->sock, ptr->buf, (int)strlen(ptr->buf), 0);
             if (retval == SOCKET_ERROR) {
                 err_display("send()");
                 break;
@@ -286,7 +282,7 @@ void RemoveSocketInfo(SOCKET sock) {
     sprintf(mes, "\n<<%s님이 접속을 종료했습니다.(%d/%d) [%s:%d]\n",
         ptr->nickname, nTotalSockets - 1, maxSockets, ptr->ip, ptr->port);
 
-    // 소켓 
+    // 소켓 닫기 및 사용자 정보 제거
     closesocket(ptr->sock);
     delete ptr;
 

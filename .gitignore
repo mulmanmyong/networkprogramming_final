@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Visual Studio / Windows build outputs
+.vs/
+x64/
+x86/
+Debug/
+Release/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.log
+*.tlog
+*.lastbuildstate
+
+# Executables and generated binaries
+*.exe
+*.dll
+*.lib
+*.exp
+
+# Local editor settings
+.vscode/
